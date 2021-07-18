@@ -1,0 +1,19 @@
+trigger CriadorParcela on Fatura__c (after insert) {
+    List<Parcela__c> adicionaListaParcela = new List<Parcela__c>();
+    
+    
+    for(Fatura__c fat : Trigger.new ){
+        for(Integer index = 0; index < fat.Parcelas__c; index++){
+            Parcela__c adicionaParcela = new Parcela__c();
+        	Date adicionaMeses = fat.Data_faturamento__c;
+        	adicionaParcela.Fatura__c = fat.Id;
+        	adicionaParcela.Status__c = 'Pendente';
+        	adicionaParcela.Valor__c = fat.Valor_Parcela__c;
+        	adicionaParcela.Data_vencimento__c = adicionaMeses.addMonths(index + 1);
+            adicionaListaParcela.add(adicionaParcela);
+        }
+		
+    }
+    
+  	insert adicionaListaParcela;
+}
